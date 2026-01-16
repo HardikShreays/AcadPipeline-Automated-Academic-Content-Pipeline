@@ -1,0 +1,94 @@
+
+================================================================================
+Lecture Hash: 10610714
+Total Chunks: 8
+Processed At: Wed Jan 14 2026 16:15:42 GMT+0530 (India Standard Time)
+Characters: 9965 | Words: 1849 | Tokens: 2492
+================================================================================
+
+Okay, join the class. First of all, join—good luck. Think about joining the class, then close your laptops. Okay, everyone has joined. Close your laptops. So, the problem is coming in graph plotting—yes or no? Figure—what was the question exactly? I have to ask some questions. Okay, what are they asking?  
+
+Part 1: Graph—sketch what will be formed? Sketch. I don’t think it’s possible to sketch, but the sketch and domain of the function—yes, sketch. You do not need to plot by pencil. Since this is geometry, it’s not practical to draw every graph. I will tell you—just a second. Is a sketch possible? Do you mean the whole graph drawing? That is not feasible, even for us. Earlier, there were standard equations. Stop writing for some time—once we understand every graph.  
+
+Standard equations—now where are these? Conic sections. In conic sections, you have parabola, ellipse—both similar equations—circle, ellipse, then hyperbola. Hyperbola has a difference of minus, to be exact. You are going towards... Below, circle: \( x^2 + y^2 = b^2 \). Shift \( (x - h)^2 + (y - k)^2 = r^2 \, a^2 \). \( y = 4a \). \( 4a = 4x \) or \( x = 4y \)—direction. If it's a plus sign, then elliptic paraboloid; negative sign, hyperbolic paraboloid. It’s not the same—mind this. We have to keep sketch of graph possible. Here, by mistake they haven’t mentioned that—you should understand the geometry of the graphs.  
+
+Now, come back to point one. Question first—start looking at each other question four, then question five shown on the sheet. Preparation for tomorrow...  
+
+We will talk about the first point. You can see \( f(x) = 4 - x^2 - y^2 \), \( f(y) = z \). Now it is given \( z = 4 - x^2 - y^2 \). Tell me—in which format does this match? On laptop—Bangaru, Abhinav Puladas—also open this. Which one of these formats matches? Just put it there first.
+
+Damnit. Let's go back to the fourth one we had. Suppose you have z = x squared plus y squared. What is that? Under root—where are you taking the root? z = z squared? Get this straight.  
+
+Now, look at the same question again. Can we write z = 4 - x squared y squared minus y squared x squared? Is that equal to 4 = -x squared plus y squared? Yes or no? Forget those four. Focus on what you see: y equals x squared.  
+
+If this portion 1/2=1, 2/2-4 y=0, 1/3-4y=0, 2/3x2=0, 2/5y=1, 2/6y=2, 2/7y=3, 2/8y=, 2/9y=, 2/10y=, 2/11y=, 3/12y=, 4/13y=, 5/14y= -x squared, this is minus y squared. Okay.  
+
+But come to the point. When we say z = x² + y², it's a paraboloid. If a paraboloid is open, its z-intercept is 4. Here, on the z-axis, how many points? Down 3x, the height. Shift it by 4.  
+
+Think back to plotting functions in single variables. If you have y + 4y - 4, you shift it. The graph's vertex will be at (4,0), z=1, ?=7, ?=2, ?=4, ?=100, ?=10, ?=11. This point is going over z-4=0 at (0,0).  
+
+Now, let’s talk symmetry. If you look closely, it resembles the earlier shape. Consider x versus y squared. Remember: elliptical vs. circular paraboloid—what’s the difference?  
+
+If I take y = x², the graph is like this. If it’s minus x², it opens the opposite way. With a plus elliptical parabola here, you have all answers except symmetry. Check if this is question 5.  
+
+Where is the difficulty? The main point: do you need to sketch the graph? In multivariable contexts, can you plot surfaces or symmetry? Geometry: 1-1-2-3, 1-2=3, …, 1/2=0, 1/4=0, 2/3=0, 2/5=0, 2/6=0. The vertex is at (0,0).  
+
+Not complicated, but speed up. We have 10-15 questions for all contests. Let us move ahead to the next question.
+
+Okay, start with reading questions. Suppose we have z = -4√(x² + y²). This way we can get r mentioned. See, if a question gives √(9 + x² + y²), it comes through the condition. Here, r is mentioned, so only x and y are in the root format.  
+
+For x - 1 ≥ 0, x must be ≥ 1. At x = 1, y = 1. We consider the domain where 4 - x = 0 or 1 - 4, but these are preliminary thoughts.  
+
+For practice, consider the square root function in context. Proceed with the same basic equation. It's a square with the same equation.
+
+Let's consider the function z = 4 − x² − y². To analyze this, first look at the domain: x and y may range from negative infinity to positive infinity. Now observe the range: since x² and y² are always non-negative, z decreases as x or y increase in magnitude. The maximum value occurs when x=0 and y=0, giving z=4. As x or y approach infinity, z approaches negative infinity.
+
+For the vertex, note the symmetry about the z-axis. The highest point is at (0,0,4). When z=0, setting the equation to 4 − x² − y² = 0 gives x² + y² =4, which represents a circle of radius 2 in the xy-plane. 
+
+Now consider traces in vertical planes. In the xz-plane (y=0), z =4 - x², a downward parabola. Similarly in the yz-plane (x=0), z=4 - y². For horizontal planes z=k where k<4, cross-sections are circular. At k=4 it reduces to a single point (0,0,4). The surface thus forms an inverted circular paraboloid.
+
+Observe symmetry: the graph is symmetric with respect to both the xz-plane and yz-plane. For any fixed z-value between negative infinity and 4, we obtain circular cross-sections whose radii increase as z decreases. The key features remain the vertex at (0,0,4) and the circular base at z=0 with radius 2.
+
+We are not considering domain for this point. The domain is all real numbers except zero, as the function is undefined there. When discussing signum functions, we primarily focus on two main signum functions. We exclude zero from the domain, so let's consider the range. The signum function is defined as |x|/x, with domain x ∈ ℝ \ {0}.  
+
+For values greater than zero, it equals 1; for values less than zero, it equals -1. Therefore, the range is {-1, 1}. However, let me confirm this—for x > 0, it’s 1; for x < 0, it’s -1.  
+
+Now, moving to question 4. We have limited time—two weeks remaining, until approximately December 4th or 5th. After that, revision classes will begin. From March onward, the main classes will resume. Prepare your study priorities accordingly. Sample papers and revision classes are mandatory for thorough preparation.  
+
+Regarding contour plotting and multi-variable calculus surfaces: Let's analyze f(x,y). For partial derivatives, if f_xy is required, first differentiate with respect to x, then y. The limit consideration at zero must check both right-hand and left-hand approaches. The right-hand limit (RHL) as x approaches 0+ should be evaluated carefully.
+
+Value, but that is not the case. 0+2, you have to find. Such a way? This room 0. These are simple detected values. Put—is there anything? Sorry, fourth one—is it my writing? This is also a writing; it's on me. What do I mean? This is the writing of Shobhit Sir. How much will be written by this standard? Fourth one: it has a base, natural log and common log. x is given 1-1: 1-2=0, 2-3=0, 2-4=0, 2-5=0, 2-6=0, 3-8=0, 4-7=0, 5-9=0, 6-10=0, 7-11=0, 8-12=0, 9-13=0, 9-14=0. 1/x = -1/x². Now, you multiply: it will be what? x²/x that is like -x. -0 was, or -10 to 0 by mistake. We need not prove this.  
+
+So, who can do the same thing? You can do all of them. Many people are getting confused in this, and when we say y, we are using y = mx or y = kx. We put this reason behind that: if the function is given to us by dy/dx = 0.0, then what will be x? I am understanding approaching from multiple paths. Y = kx, that is. Is there any reason? Think why we are taking y = x.  
+
+Look, the coordinate or quadrant—if a point is in any ordered pair—location—third or fourth somewhere. The most physical or common way of a curve which can approach that point, which one is possible? This straight line joins in to pass over. If you rotate and rotate the lines of this line—that’s why your first priority is to take those lines. It isn’t mandatory because we get serious sometimes. There are no such things. Then how do I make sure? Is square, y=2—whatever it is. To the power xy^(1/3)—this way we take all the curves. Maximum three times means there are a lot of answers, except for extreme levels; otherwise you will get your answer at taking two curves.  
+
+Now, point limit exists—then what happens in every curve? If not exist, different depending on—because a real number value. xk is not in good, right now. Now where it comes—that sums up as real numbers. But when we take y = kx, then that dependency becomes on k. Tell me now: question number 7 has been completed. Yes.
+
+Fifth one numbered: domain and range of a multivariable function. Open the PDF; the question involves √(9 - x² - y²). Geometrically, what does this represent? Since r is involved, r = √(9) = 3.  
+
+The domain: x, y ∈ ℝ² such that 9 - x² - y² ≥ 0. The range is [0, 3].  
+
+Question number 7: multivariable limit. Determine if the limit exists or does not exist. Consider cases like r² = k² + 1. Check along different paths—if values differ, the limit does not exist. Address any doubts or confusion regarding this approach.
+
+-2x = 0. -2x - 4 = 0. Now, here is the value of the second derivative: minus 2x times e raised to the power of -x squared. This derivative curve is less than zero. If you do it, the next value will be your answer.  
+
+Point of inflection: all are gone. Tell me, which one was the point of inflection? See how much you know.  
+
+0 - 0 = 0, 0 - 1 = 0, 0 - 2 = 0, 1.25, 0 - 3 = 0, 0 - 9 = 0, 0 - 6 = 0, 0 - 8 = 0.  
+
+When ρ² is whole square, like x + 1/ρ² and x minus 1/ρ². Now solve it the way we go. But why do kx when 0/50 = 20? Then keep it. Check directly. Some people check, and this is the same value: 1 - 2 = -1, 2 - 3 = -1.  
+
+Most of the time when we practice: 2x = -1/3, mcg. That’s why they are asking for a negative reason. What is this interval? Open test. If it opens, then close. That is the point of instruction. 0.0 is 0. We will have to take -1/2 + 1/2.  
+
+Concave down, but the second derivative should be less than zero. First second derivative = 2. x=1/2, x²=1/2, x³=1/2. 4 = 2, -1/2 + 1/2.
+
+
+
+================================================================================
+SUMMARY
+================================================================================
+Total Lectures: 1
+Total Characters: 9965
+Total Words: 1849
+Total Tokens (approx): 2492
+================================================================================

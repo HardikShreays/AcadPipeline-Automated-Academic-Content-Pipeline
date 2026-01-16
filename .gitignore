@@ -1,0 +1,51 @@
+# Temporary files
+tempCodeRunnerFile.js
+*.tmp
+
+# Environment variables
+.env
+.env.local
+
+# Node modules
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Python virtual environments
+venv/
+.venv/
+env/
+.envrc
+pip-wheel-metadata/
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+.tox/
+htmlcov/
+
+# Build / distribution
+build/
+dist/
+*.egg-info/
+
+# Project-specific Python env (Whisper)
+audio processing/whisper-env/
+
+# Audio files (if you want to ignore them)
+audios/
+*.wav
+*.mp3
+*.m3u8
+
+# OS files
+.DS_Store
+Thumbs.db

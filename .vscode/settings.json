@@ -1,0 +1,11 @@
+{
+  "code-runner.runInTerminal": true,
+  "code-runner.executorMap": {
+    "javascript": "node $fileName"
+  },
+  "code-runner.clearPreviousOutput": true,
+  "code-runner.saveAllFilesBeforeRun": true,
+  "code-runner.saveFileBeforeRun": true,
+  "code-runner.fileDirectoryAsCwd": true,
+  "code-runner.showExecutionMessage": true
+}

@@ -49,6 +49,15 @@ audios/
 # Generated merged notes exports
 merged_notes_*.txt
 
+# Generated / temp files (do not commit)
+trial.txt
+trial/
+1.txt
+notes/
+pdfs/
+lecture_*/
+PDF_processing/pdfs/
+
 # OS files
 .DS_Store
 Thumbs.db

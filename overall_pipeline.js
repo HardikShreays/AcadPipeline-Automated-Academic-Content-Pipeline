@@ -29,6 +29,7 @@ import { processPdf } from "./PDF_processing/pdf_pipeline.js";
 import { processLecture } from "./audio processing/process_lecture.js";
 import ProcessedLecture from "./models/processedLectures.js";
 import LectureNotes from "./models/lectureNotes.js";
+import { cleanupTempFiles } from "./cleanup.js";
 
 configDotenv();
 
@@ -224,8 +225,13 @@ Generate structured academic notes following the PDF structure, enhanced only wh
       { new: true, upsert: true }
     );
     console.log(`   ✓ Notes saved to MongoDB (lectureHash: ${hash})\n`);
+
+    // Clean up temp files (audios, pdfs) for this hash
+    const { removed, errors } = cleanupTempFiles(hash);
+    if (removed.length) console.log(`   ✓ Cleaned up ${removed.length} temp file(s)`);
+    if (errors.length) console.warn("   Cleanup warnings:", errors);
+
     return { lectureHash: hash, notes, doc };
-    
   } finally {
     // Disconnect from MongoDB
     await mongoose.disconnect();

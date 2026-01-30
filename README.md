@@ -1,136 +1,246 @@
-## Summariser (WIP)
+# AcadPipeline — Automated Academic Content Pipeline
 
-This repository is **under active development**. Current focus is building a pipeline to:
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Database-green.svg)](https://www.mongodb.com/)
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](LICENSE)
 
-- **Extract lecture audio** from an HLS (`.m3u8`) URL (limited to **1.5 hours**)
-- **Chunk audio** into ~10 minute segments
-- **Transcribe** each chunk (Whisper / faster-whisper)
-- **Post-process / normalize** transcript text (subject-aware prompts)
-- **Store results** in MongoDB (`ProcessedLecture` collection)
+**AcadPipeline** is a backend pipeline that turns lecture videos and PDFs into structured academic notes. It downloads PDFs, extracts text (with OCR when needed), transcribes lecture audio from HLS streams, and uses an LLM to merge both into exam-oriented notes stored in MongoDB.
 
 ---
 
-## Current status
+## Features
 
-- **Works end-to-end** for: extract → chunk → transcribe → post-process → save processed chunks
-- Still evolving: schema conventions, error handling, performance, and config cleanup
+- **PDF pipeline** — Download PDF from URL, extract text (pdfplumber + OCR fallback), output by `lectureHash`
+- **Lecture pipeline** — Extract audio from m3u8 URL (up to 1.5 hours), chunk, transcribe (faster-whisper), post-process, store in MongoDB
+- **Overall pipeline** — Single flow: PDF URL + lecture m3u8 URL → combined notes saved in MongoDB (skips if `lectureHash` already processed)
+- **REST API** — Run pipeline, fetch notes by hash, cleanup temp files
+- **Temp cleanup** — Auto-cleanup after pipeline run; optional CLI/API to clean by hash or all
+
+---
+
+## Project structure
+
+```
+AcadPipeline-Automated-Academic-Content-Pipeline/
+├── server.js                 # Express API server (POST /api/pipeline, GET /api/notes, POST /api/cleanup)
+├── overall_pipeline.js       # Orchestrator: PDF + lecture → notes in MongoDB (skip if hash exists)
+├── cleanup.js                # Temp file cleanup (audios, pdfs) — CLI + exported helpers
+├── index.js                  # Scripts: courses/lectures fetch, audio/chunk examples
+├── process_lecture_example.js
+├── merge_notes.js            # Export merged transcript from ProcessedLecture by hash
+├── generate_notes.js         # Legacy: PDF URL + transcript URL → notes (no pipeline)
+├── download_whiteboard_pdf.js
+│
+├── audio processing/         # Lecture → transcript
+│   ├── process_lecture.js    # Main: extract → chunk → transcribe → post-process → DB
+│   ├── audio_extraction.js   # ffmpeg: m3u8 → wav (1.5h limit)
+│   ├── chunking.js           # Split wav into chunks (e.g. 10 min)
+│   ├── get_duration.js
+│   ├── process_chunk.py      # Transcribe + post-process one chunk (faster-whisper + OpenRouter)
+│   ├── post_processing.py
+│   ├── transcribe_fw.py
+│   └── whisper-env/           # Python venv (transcription) — create locally, not in repo
+│
+├── PDF_processing/           # PDF → extracted text
+│   ├── pdf_pipeline.js       # Download + extract text (exports processPdf, downloadPdf, extractText)
+│   ├── download_whiteboard_pdf.js
+│   ├── pdf_summariser_ocr.py  # OCR/text extraction
+│   ├── pdf_summariser_noocr.py
+│   └── pdf_env/              # Python venv (PDF deps, e.g. pdfplumber) — create locally, not in repo
+│
+├── models/                   # Mongoose schemas
+│   ├── processedLectures.js  # lectureHash, processedChunks[], totalChunks, processedAt
+│   ├── lectureNotes.js       # lectureHash (indexed), notes, pdfUrl, m3u8Url, generatedAt
+│   ├── lectures.js           # Lecture metadata (from external API)
+│   └── courses.js            # Course metadata
+│
+├── openRouter/               # OpenRouter-related utilities (e.g. openrouter.py)
+├── .env                      # MONGO_URI, OPENROUTER_KEY (not committed)
+├── package.json
+└── README.md
+```
+
+**Data flow (overall pipeline):**
+
+1. **PDF** — `pdfUrl` → download → extract text (PDF_processing) → text in memory  
+2. **Lecture** — `m3u8Url` + `lectureHash` → extract audio → chunk → transcribe → post-process → `ProcessedLecture` in MongoDB  
+3. **Notes** — PDF text + merged transcript → LLM (OpenRouter) → notes saved in `LectureNotes` (by `lectureHash`)  
+4. **Cleanup** — Temp files (audios, pdfs) for that hash removed after success  
 
 ---
 
 ## Tech stack
 
-- **Node.js** (ESM modules) + **Mongoose**
-- **ffmpeg** via `fluent-ffmpeg` + `ffmpeg-static`
-- **Python** virtual environment for transcription:
-  - `audio processing/whisper-env/`
-  - `faster-whisper` + its dependencies
-- OpenRouter API for transcript cleaning:
-  - `OPENROUTER_KEY` required
+| Layer        | Stack |
+|-------------|--------|
+| Runtime     | Node.js 18+ (ESM) |
+| API         | Express 5 |
+| Database    | MongoDB (Mongoose) |
+| Audio       | ffmpeg (fluent-ffmpeg, ffmpeg-static), 1.5h cap |
+| Transcription | Python: faster-whisper, OpenRouter for post-processing |
+| PDF         | Python: pdfplumber, OCR (PDF_processing/pdf_env) |
+| LLM         | OpenRouter (e.g. deepseek) for note generation |
 
 ---
 
-## Environment variables
+## Prerequisites
 
-Create a `.env` in the project root:
-
-```bash
-MONGO_URI="mongodb://..."
-OPENROUTER_KEY="..."
-```
+- **Node.js** 18+
+- **MongoDB** (local or Atlas)
+- **Python 3** (for transcription + PDF OCR)
+- **ffmpeg** (on PATH for audio extraction)
 
 ---
 
 ## Installation
 
-### Node dependencies
+### 1. Clone and install Node dependencies
 
 ```bash
+git clone https://github.com/HardikShreays/AcadPipeline-Automated-Academic-Content-Pipeline.git
+cd AcadPipeline-Automated-Academic-Content-Pipeline
 npm install
 ```
 
-### Python environment (transcription)
+### 2. Environment variables
 
-This repo expects a Python venv at:
+Create a `.env` file in the project root:
 
-- `audio processing/whisper-env/bin/python3`
+```bash
+MONGO_URI="mongodb://localhost:27017/yourdb"   # or your Atlas URI
+OPENROUTER_KEY="sk-or-..."
+```
 
-If it already exists, you’re good. Otherwise, create one and install deps inside it.
+Optional: `PORT=3000` (default 3000 for the API server).
+
+### 3. Python environments
+
+**Audio (transcription)** — under `audio processing/`:
+
+```bash
+cd "audio processing"
+python3 -m venv whisper-env
+source whisper-env/bin/activate   # Windows: whisper-env\Scripts\activate
+pip install faster-whisper        # and any other deps used by process_chunk.py
+deactivate
+```
+
+**PDF (OCR / text extraction)** — under `PDF_processing/`:
+
+```bash
+cd PDF_processing
+python3 -m venv pdf_env
+source pdf_env/bin/activate
+pip install pdfplumber             # and any other deps for pdf_summariser_ocr.py
+deactivate
+```
 
 ---
 
-## Main pipeline (lecture processing)
+## API reference
 
-### What it does
-
-The orchestrator is `audio processing/process_lecture.js`:
-
-- Requires:
-  - `lectureHash` (identifier for DB + filenames)
-  - `m3u8Url` (explicitly provided; **not** derived from hash)
-- Extracts only **1.5 hours** of audio (hard-limited in `audio processing/audio_extraction.js`)
-- Saves processed results to MongoDB model:
-  - `models/processedLectures.js` (`ProcessedLecture`)
-
-### Run example
-
-Edit values in `process_lecture_example.js` and run:
+Start the server:
 
 ```bash
+npm start
+# or: node server.js
+```
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/pipeline` | Run overall pipeline. Body: `{ "pdfUrl", "m3u8Url", "lectureHash"?: string }`. Returns `{ lectureHash, notes, skipped?, generatedAt }`. Skips if notes already exist for `lectureHash`. |
+| `GET`  | `/api/notes/:lectureHash` | Get stored notes for a lecture hash. |
+| `POST` | `/api/cleanup` | Clean temp files. Body: `{ "lectureHash": "..." }` or `{ "all": true }`. Returns `{ removedCount, removed[], errors? }`. |
+| `GET`  | `/health` | Health check. |
+
+**Example: run pipeline**
+
+```bash
+curl -X POST http://localhost:3000/api/pipeline \
+  -H "Content-Type: application/json" \
+  -d '{"pdfUrl":"https://example.com/slides.pdf","m3u8Url":"https://example.com/lecture.m3u8","lectureHash":"10610714"}'
+```
+
+**Example: get notes**
+
+```bash
+curl http://localhost:3000/api/notes/10610714
+```
+
+---
+
+## CLI usage
+
+**Overall pipeline (PDF + lecture → notes in MongoDB):**
+
+```bash
+node overall_pipeline.js "<pdfUrl>" "<m3u8Url>" [lectureHash]
+# If lectureHash is omitted, a timestamp is used. If notes exist for hash, pipeline is skipped.
+```
+
+**Cleanup temp files (audios, pdfs):**
+
+```bash
+# By lecture hash
+node cleanup.js 10610714
+# Or all
+node cleanup.js --all
+# Or via npm
+npm run cleanup -- 10610714
+npm run cleanup -- --all
+```
+
+**Lecture-only processing (example):**
+
+```bash
+# Edit process_lecture_example.js with lectureHash and m3u8Url, then:
 node process_lecture_example.js
 ```
 
-Outputs:
-- `audios/<lectureHash>.wav`
-- `audios/chunks/<lectureHash>/chunk_0.wav`, ...
-- MongoDB: `ProcessedLecture` document with `lectureHash` and `processedChunks[]`
-
----
-
-## View processed lecture (merge chunks)
-
-You can query MongoDB and merge chunk text by `lectureHash` using a small script (example code used in `tempCodeRunnerFile.js`).
-
-Typical workflow:
-- Fetch `ProcessedLecture` by `{ lectureHash }`
-- Sort `processedChunks` by `chunkNumber`
-- Merge text with `\n\n`
-
----
-
-## Download whiteboard PDF
-
-Use `download_whiteboard_pdf.js` to download a PDF and save it as `<lectureHash>.pdf`.
+**PDF-only pipeline:**
 
 ```bash
-node download_whiteboard_pdf.js <lectureHash> "<pdfUrl>" [outputDir]
+node PDF_processing/pdf_pipeline.js "<pdfUrl>" [lectureHash] [outputDir]
 ```
-
-Example:
-
-```bash
-node download_whiteboard_pdf.js 10610714 "https://d3dyfaf3iutrxo.cloudfront.net/file/course/video_session/whiteboard/5503ad2946d049c39ea2f139fbd58060.pdf" pdfs
-```
-
-Saves:
-- `pdfs/10610714.pdf`
 
 ---
 
-## Notes / gotchas
+## Roadmap and future work
 
-- **Network required**:
-  - Downloading `.m3u8` / audio segments
-  - OpenRouter post-processing calls
-  - PDF downloading
-- **Last chunk may be skipped** if transcription/post-processing produces empty text (silence / low-entropy filtering).
-- The `Lecture` model in `models/lectures.js` is used for **metadata** (raw API data); processed transcripts are stored separately in `ProcessedLecture`.
+- **Current** — Stable backend: pipeline, API, cleanup, MongoDB storage by `lectureHash`.
+- **Planned**
+  - **Frontend** — A web UI will be added (separate repo or `/frontend` in this repo) to:
+    - Submit PDF + lecture URLs and optional `lectureHash`
+    - Trigger the pipeline via `POST /api/pipeline`
+    - Display status and show generated notes from `GET /api/notes/:lectureHash`
+    - List or search lectures/notes (if list/search endpoints are added)
+  - **Backend** — Optional: job queue for long-running runs, progress endpoints, list notes/courses.
+
+The API is designed so a frontend can rely on:
+
+- `POST /api/pipeline` to start (or skip) a run
+- `GET /api/notes/:lectureHash` to display notes
+- `POST /api/cleanup` to free disk space when needed
 
 ---
 
-## Roadmap (short-term)
+## Notes and gotchas
 
-- Improve reliability & retries around transcription + OpenRouter calls
-- Better progress tracking and chunk-level error reporting
-- Optional: store raw transcripts separately from cleaned transcripts
-- Add CLI wrappers for common workflows
+- **Network** — Pipeline needs internet for: m3u8/audio, PDF download, OpenRouter.
+- **Audio limit** — Lecture audio is capped at 1.5 hours.
+- **Idempotency** — Same `lectureHash` skips pipeline and returns existing notes; temp files are not re-created.
+- **Temp files** — `audios/` and `pdfs/` are ignored in git; cleanup runs after a successful pipeline and can be triggered via API or CLI.
 
+---
+
+## License
+
+ISC.
+
+---
+
+## Author
+
+**HardikShreays**  
+GitHub: [HardikShreays](https://github.com/HardikShreays)  
+Repository: [AcadPipeline-Automated-Academic-Content-Pipeline](https://github.com/HardikShreays/AcadPipeline-Automated-Academic-Content-Pipeline)

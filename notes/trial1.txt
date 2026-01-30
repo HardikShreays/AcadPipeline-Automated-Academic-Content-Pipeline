@@ -1,0 +1,145 @@
+# Structured Academic Notes: Indexing & Query Optimization
+
+## Indexing
+
+### Definition & Purpose
+- SQL index functions like a book index, enabling rapid row location without full table scans
+- **Structure:** Typically implemented using B-Tree or B+ Tree data structures
+
+### Use Case Demonstration
+**Before Index**
+```sql
+EXPLAIN SELECT * FROM customers WHERE first_name='priya';
+```
+- Output: Full table scan (type: ALL), 14.29% filtering efficiency
+
+**After Index Creation**
+```sql
+CREATE INDEX a ON customers (first_name);
+EXPLAIN SELECT * FROM customers WHERE first_name="Priya";
+```
+- Output: Index scan (type: ref), 100% filtering efficiency
+
+### EXPLAIN Command
+- Provides query execution plan details:
+  - Query ID
+  - Scan type
+  - Possible keys
+  - Actual key used
+  - Rows examined
+  - Filtering percentage
+
+## Types of Indexes
+
+### Clustered Index
+- **Definition:** Physical row order matches indexed column order (1 per table)
+- **Default Implementation:** Created automatically on primary key in MySQL
+- **Verification Query:**
+```sql
+SELECT INDEX_SCHEMA, INDEX_NAME, COLUMN_NAME, INDEX_TYPE 
+FROM information_schema.statistics 
+WHERE TABLE_NAME = 'customers';
+```
+
+### Non-Clustered Index
+- **Definition:** Separate structure referencing table rows (multiple allowed)
+- **Creation:**
+```sql
+CREATE INDEX cfs ON customers (first_name,state);
+```
+- **Key Differentiator:** Physical data remains unordered (index contains pointers)
+
+## Performance Tradeoffs
+
+### Advantages
+- Accelerated query execution
+- Efficient data sorting/retrieval
+- Consistent performance at scale
+
+### Disadvantages
+- Increased storage requirements
+- Write operation penalties (inserts/updates slower)
+- Maintenance overhead for index updates
+
+## Query Optimization Best Practices
+
+### Column Selection Efficiency
+```sql
+-- Unoptimized
+SELECT * FROM products;
+
+-- Optimized
+SELECT product_name, category FROM products;
+```
+*Rationale:* Reduced data transfer improves speed
+
+### Existence Checking
+```sql
+-- Preferred Method
+SELECT ... WHERE EXISTS(...)
+
+-- Avoid
+SELECT ... WHERE COUNT(...) > 0
+```
+*Performance Basis:* EXISTS terminates on first match
+
+### COUNT Function Variations
+1. `COUNT(*)`: Fastest for total rows (includes NULLs)
+2. `COUNT(column_name)`: Counts non-NULL values only
+3. `COUNT(DISTINCT)`: Slowest due to deduplication
+
+### Filter Sequence Optimization
+```sql
+-- Suboptimal
+SELECT ... WHERE name LIKE '%X%' AND id = 123
+
+-- Optimized
+SELECT ... WHERE id = 123 AND name LIKE '%X%'
+```
+*Execution Insight:* Early row reduction accelerates processing
+
+### UNION Operations
+```sql
+-- Use when duplicates irrelevant
+SELECT ... UNION ALL ...
+
+-- Avoid unless duplicate removal required
+SELECT ... UNION ...
+```
+
+### Join Order Strategy
+- **Optimal Sequence:** Larger tables → smaller tables
+```sql
+FROM inventory AS i  -- Larger table
+JOIN warehouses AS w ON ...
+WHERE w.city = 'New York'
+```
+
+### Sorting Efficiency
+- Apply ORDER BY **after** filtering and joining
+- Sorting reduced datasets improves performance
+
+### Subquery Alternatives
+```sql
+-- Prefer joins over nested queries
+SELECT e.* 
+FROM employees e 
+JOIN departments d ON e.department_id = d.id 
+WHERE d.name = 'Sales';
+```
+
+## Execution Plan Analysis
+- Always prefix queries with `EXPLAIN` to:
+  1. Verify index usage
+  2. Identify full table scans
+  3. Analyze row examination metrics
+  4. Optimize join strategies
+
+*Key Insight:* Modern SQL optimizers manage many execution details, but structural query choices significantly impact performance.
+
+## Indexing Tradeoffs (Lecture Reinforcement)
+- **Read vs. Write Tradeoff:** Indexes accelerate searches but decelerate insert/update operations
+- **Storage Overhead:** Each index requires additional storage space
+- **Composite Indexes:** Can optimize multi-column queries but increase maintenance complexity
+
+*Implementation Note:* B-Tree indexes automatically balance for consistent search performance (O(log n) complexity).

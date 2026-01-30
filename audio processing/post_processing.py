@@ -65,6 +65,18 @@ Remove:
 - Do not translate Hinglish into explanations.
 - Remove only non-meaningful filler words.
 
+REPETITION RULE:
+- If a statement is repeated verbatim or near-verbatim and one instance is clearly complete,
+  keep the first complete instance and remove later repetitions.
+- If none are clearly complete, remove all.
+
+Remove:
+- Live demo narration (commands, clicks, waiting, restarting, copying, pasting)
+- Temporal instructions tied to real-time actions
+unless they contain standalone conceptual information.
+
+
+
 OUTPUT REQUIREMENTS:
 - Clean academic prose
 - Correct notation where safe
@@ -114,6 +126,18 @@ GENAI-SPECIFIC RULES:
 - Remove speculative or half-spoken model names.
 """
 
+SYSTEM_PROMPT_WEBDEV = SYSTEM_PROMPT_BASE + """
+WEB DEVELOPMENT-SPECIFIC RULES:
+
+- Normalize standard web terminology (HTML, CSS, JS, React, Express, API, HTTP) only when explicit.
+- Preserve framework/library names as spoken (React, Next.js, Node.js, Express, Tailwind, Bootstrap, etc.).
+- For code, ONLY normalize clearly complete fragments (full tag, full function, full component or handler).
+- Remove half-written, malformed, or interrupted code snippets and configuration blocks.
+- Do NOT infer missing props, routes, hooks, lifecycle methods, or middleware.
+- Do NOT create or rename components, endpoints, or files that are not explicitly spoken.
+- Keep URLs, HTTP verbs, and status codes exactly as spoken when complete; drop incomplete ones.
+"""
+
 # =========================
 # PROMPT REGISTRY
 # =========================
@@ -123,6 +147,7 @@ SYSTEM_PROMPTS = {
     "DSA": SYSTEM_PROMPT_DSA,
     "DBMS": SYSTEM_PROMPT_DBMS,
     "GenAI": SYSTEM_PROMPT_GENAI,
+    "WebDev": SYSTEM_PROMPT_WEBDEV,
 }
 
 def subject_classifier(text):
@@ -160,6 +185,19 @@ def subject_classifier(text):
             "transformer", "attention", "embedding",
             "llm", "prompt", "fine tuning", "inference",
             "overfitting", "underfitting"
+        ],
+        "WebDev": [
+            "html", "css", "javascript", "js", "typescript", "ts",
+            "frontend", "backend", "full stack", "full-stack",
+            "react", "next js", "next.js", "vue", "angular",
+            "component", "props", "state", "hook", "use state", "use effect",
+            "dom", "event listener", "event handler",
+            "api", "rest", "rest api", "http", "request", "response",
+            "endpoint", "route", "router", "controller",
+            "express", "node", "node js", "node.js",
+            "json", "fetch", "axios",
+            "layout", "flexbox", "grid", "responsive", "media query",
+            "tailwind", "bootstrap", "css module", "styled components"
         ]
     }
 

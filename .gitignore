@@ -46,6 +46,10 @@ audios/
 *.mp3
 *.m3u8
 
+# Generated merged notes exports
+merged_notes_*.txt
+
 # OS files
 .DS_Store
 Thumbs.db
+#### groqq 

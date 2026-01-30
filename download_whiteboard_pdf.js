@@ -10,7 +10,7 @@ function usage() {
       "  node download_whiteboard_pdf.js <lectureHash> <pdfUrl> [outputDir]",
       "",
       "Example:",
-      '  node download_whiteboard_pdf.js 10610714 "https://d3dyfaf3iutrxo.cloudfront.net/file/course/video_session/whiteboard/5503ad2946d049c39ea2f139fbd58060.pdf" pdfs',
+      '  node download_whiteboard_pdf.js 10610714 "https://d3dyfaf3iutrxo.cloudfront.net/file/course/video_session/whiteboard/8bfed5b67ce94f698a8fb16f96aa8eeb.pdf" pdfs',
       "",
       "Notes:",
       "- Saves as <outputDir>/<lectureHash>.pdf",

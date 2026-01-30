@@ -35,8 +35,8 @@ async function main() {
   
   // Process a lecture by hash
   // The hash is used to identify the lecture in the database
-  const lectureHash = "10610714"; // Replace with actual lecture hash
-  const m3u8Url = "https://d3dyfaf3iutrxo.cloudfront.net/newton-school-upgrad-recordings/10610714_hls/10610714_master.m3u8"; // Provide explicit m3u8 URL
+  const lectureHash = "1"; // Replace with actual lecture hash
+  const m3u8Url = "https://d3dyfaf3iutrxo.cloudfront.net/newton-school-upgrad-recordings/10604793_hls/10604793_master.m3u8"
   
   try {
     const result = await processLecture(lectureHash, m3u8Url);
